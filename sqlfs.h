@@ -144,6 +144,15 @@ struct sqlfs_t
     int sqlfs_open_key(const char *db_file, const uint8_t *key, size_t keylen, sqlfs_t **psqlfs);
     int sqlfs_rekey(const char *db_file_name, const uint8_t *old_key, size_t old_key_len,
                     const void *new_key, size_t new_key_len);
+    /**
+     * Databases created with SQLCipher 3.0 are not compatible with SQLCipher 4.0.
+     * Setting this flag will set "PRAGMA cipher_compatibility = %i" on the current database.
+     * This must be called after the database is keyed.
+     *
+     * For more information see https://www.zetetic.net/sqlcipher/sqlcipher-api/#cipher_compatibility
+     **/
+    int sqlfs_set_cipher_compatibility(sqlfs_t *db, const uint32_t cipher_compatibility);
+    int sqlfs_vacuum(sqlfs_t *sqlfs);
 #endif
 #ifdef HAVE_LIBFUSE
     int sqlfs_fuse_main(int argc, char **argv);
