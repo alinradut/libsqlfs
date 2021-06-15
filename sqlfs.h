@@ -94,6 +94,26 @@ extern "C" {
 #endif /* HAVE_LIBFUSE */
 #include "sqlfs_internal.h"
 
+#ifdef HAVE_LIBSQLCIPHER
+# include "SQLCipher/sqlite3.h"
+#else
+# include "sqlite3.h"
+#endif
+
+struct sqlfs_t
+{
+    sqlite3 *db;
+    int transaction_level;
+    int in_transaction;
+    mode_t default_mode;
+
+    sqlite3_stmt *stmts[200];
+#ifndef HAVE_LIBFUSE
+    uid_t uid;
+    gid_t gid;
+#endif
+};
+
 /* There is a distinction between "init" and "open/close" mode.  FUSE uses
  * "init" mode, where sqlfs instances are created on the fly as needed and
  * stored using pthread_setspecific().  "open/close" mode is really no
